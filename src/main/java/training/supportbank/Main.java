@@ -68,8 +68,12 @@ class Bank {
     }
 
     void showAccount(String name) {
-        System.out.println("Balance for account "+name+": "+accounts.get(name));
         System.out.println("Transactions for account "+name+": ");
+        for(Transaction t:this.transactions) {
+            if(t.to.equals(name) || t.from.equals(name)) {
+                System.out.println(t.description);
+            }
+        }
     }
 
     void printAccounts() {
