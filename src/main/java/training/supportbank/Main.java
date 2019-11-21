@@ -9,14 +9,31 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class Main {
-
-
     public static void main(String args[]) throws IOException, ParseException {
         Path path = Paths.get(args[0]);
         String input = Files.readString(path);
         Bank bank = new Bank(input);
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Transactions parsed!\nWhat would you like to do?");
+
+        String command = scanner.nextLine();
+        if(!command.startsWith("List ")) {
+            System.out.println("I don't recognise that command, please either type 'List All' or 'List [Account]'");
+        } else {
+            String instruction = command.substring("List ".length());
+            if(instruction.equals("All")) {
+                bank.printAccounts();
+            } else if(bank.accounts.containsKey(instruction)) {
+                bank.showAccount(instruction);
+            } else {
+                System.out.println("Sorry, there is no account with that name");
+            }
+        }
+        scanner.close();
     }
 }
 
@@ -47,6 +64,20 @@ class Bank {
             accounts.put(to, accounts.get(to) - val);
         } else {
             accounts.put(to, 0 - val);
+        }
+    }
+
+    void showAccount(String name) {
+        System.out.println("Balance for account "+name+": "+accounts.get(name));
+        System.out.println("Transactions for account "+name+": ");
+    }
+
+    void printAccounts() {
+        for(String i:this.accounts.keySet()) {
+            float balance = this.accounts.get(i);
+            System.out.print(i);
+            System.out.print(": ");
+            System.out.println(balance/100);
         }
     }
 }
