@@ -41,6 +41,7 @@ public class Main {
                 } else if(bank.accounts.containsKey(instruction)) {
                     bank.showAccount(instruction);
                 } else {
+                    LOGGER.info("user requested details of non-account: " + instruction);
                     System.out.println("Sorry, there is no account with that name");
                 }
             }
@@ -69,6 +70,7 @@ class Bank {
     }
 
     void transactionsFromFile(String path) throws IOException {
+        LOGGER.info("importing transactions from file " + path);
         Path file = Paths.get(path);
         String input = Files.readString(file);
         String[] transactionStrings = input.split("\n");
