@@ -18,20 +18,25 @@ public class Main {
         Bank bank = new Bank(input);
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Transactions parsed!\nWhat would you like to do?");
-
-        String command = scanner.nextLine().toLowerCase();
-        System.out.println(command);
-        if(!command.startsWith("List ".toLowerCase())) {
-            System.out.println("I don't recognise that command, please either type 'List All' or 'List [Account]'");
-        } else {
-            String instruction = command.substring("List ".length());
-            if(instruction.equals("All".toLowerCase())) {
-                bank.printAccounts();
-            } else if(bank.accounts.containsKey(instruction)) {
-                bank.showAccount(instruction);
+        System.out.println("Transactions parsed!");
+        boolean cont = true;
+        while(cont) {
+            System.out.println("\nWhat would you like to do?");
+            String command = scanner.nextLine();
+            if(command.toLowerCase().equals("exit")) {
+                cont = false;
+            } else if(!command.toLowerCase().startsWith("List ".toLowerCase())) {
+                System.out.println("I don't recognise that command, please either type 'List All' or 'List [Account]'");
             } else {
-                System.out.println("Sorry, there is no account with that name");
+                String instruction = command.substring("List ".length());
+                System.out.println(instruction);
+                if(instruction.equals("All".toLowerCase())) {
+                    bank.printAccounts();
+                } else if(bank.accounts.containsKey(instruction)) {
+                    bank.showAccount(instruction);
+                } else {
+                    System.out.println("Sorry, there is no account with that name");
+                }
             }
         }
         scanner.close();
