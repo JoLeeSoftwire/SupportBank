@@ -62,9 +62,9 @@ class Bank {
             addToAccount(trans.to, trans.value);
             subFromAccount(trans.from, trans.value);
         } catch (NumberFormatException e) {
-            LOGGER.warn("could not parse transaction, invalid value, skipping");
+            LOGGER.warn("could not parse transaction, invalid value, skipping: " + input);
         } catch (DateTimeParseException e) {
-            LOGGER.warn("could not parse transaction, invalid date, skipping");
+            LOGGER.warn("could not parse transaction, invalid date, skipping: " + input);
         }
     }
 
