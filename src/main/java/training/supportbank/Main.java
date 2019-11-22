@@ -69,10 +69,10 @@ class Bank {
 
     void showAccount(String name) {
         System.out.println("Transactions for account "+name+": ");
+        System.out.println("Date\t\t| Value\t| Who\t\t| Description");
+        System.out.println("-----------------------------------------------------------------");
         for(Transaction t:this.transactions) {
-            if(t.to.equals(name) || t.from.equals(name)) {
-                System.out.println(t.description);
-            }
+            t.transactionSummary(name);
         }
     }
 
@@ -100,5 +100,26 @@ class Transaction {
         to = elements[2];
         description = elements[3];
         value = (int) (Float.parseFloat(elements[4]) * 100);
+    }
+
+    void transactionSummary(String name) {
+        if(this.from.equals(name)) {
+            System.out.print(this.date);
+            System.out.print("\t| ");
+            System.out.print((float)this.value/100);
+            System.out.print("\t| ");
+            System.out.print(this.to);
+            System.out.print("\t| ");
+            System.out.println(this.description);
+        }
+        if(this.to.equals(name)) {
+            System.out.print(this.date);
+            System.out.print("\t| ");
+            System.out.print((float)this.value/-100);
+            System.out.print("\t| ");
+            System.out.print(this.from);
+            System.out.print("\t| ");
+            System.out.println(this.description);
+        }
     }
 }
