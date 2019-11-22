@@ -10,15 +10,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Main {
+    private static final Logger LOGGER = LogManager.getLogger();
     public static void main(String args[]) throws IOException, ParseException {
         Path path = Paths.get(args[0]);
         String input = Files.readString(path);
         Bank bank = new Bank(input);
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Transactions parsed!");
+        LOGGER.info("Transactions parsed!");
         boolean cont = true;
         while(cont) {
             System.out.println("\nWhat would you like to do?");
@@ -26,10 +29,10 @@ public class Main {
             if(command.toLowerCase().equals("exit")) {
                 cont = false;
             } else if(!command.toLowerCase().startsWith("List ".toLowerCase())) {
+                LOGGER.warn("unrecognised command: "+command);
                 System.out.println("I don't recognise that command, please either type 'List All' or 'List [Account]'");
             } else {
                 String instruction = command.substring("List ".length());
-                System.out.println(instruction);
                 if(instruction.equals("All".toLowerCase())) {
                     bank.printAccounts();
                 } else if(bank.accounts.containsKey(instruction)) {
