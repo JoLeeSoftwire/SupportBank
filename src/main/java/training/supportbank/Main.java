@@ -20,12 +20,13 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Transactions parsed!\nWhat would you like to do?");
 
-        String command = scanner.nextLine();
-        if(!command.startsWith("List ")) {
+        String command = scanner.nextLine().toLowerCase();
+        System.out.println(command);
+        if(!command.startsWith("List ".toLowerCase())) {
             System.out.println("I don't recognise that command, please either type 'List All' or 'List [Account]'");
         } else {
             String instruction = command.substring("List ".length());
-            if(instruction.equals("All")) {
+            if(instruction.equals("All".toLowerCase())) {
                 bank.printAccounts();
             } else if(bank.accounts.containsKey(instruction)) {
                 bank.showAccount(instruction);
