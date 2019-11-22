@@ -7,18 +7,21 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 public class Main {
     private static final Logger LOGGER = LogManager.getLogger();
     public static void main(String args[]) throws IOException, ParseException {
-        Path path = Paths.get(args[0]);
-        String input = Files.readString(path);
-        Bank bank = new Bank(input);
+        Bank bank = new Bank();
+        
+        bank.transactionsFromFile("transactions/Transactions2014.csv");
+        bank.transactionsFromFile("transactions/DodgyTransactions2015.csv");
 
         Scanner scanner = new Scanner(System.in);
         LOGGER.info("Transactions parsed!");
@@ -33,7 +36,7 @@ public class Main {
                 System.out.println("I don't recognise that command, please either type 'List All' or 'List [Account]'");
             } else {
                 String instruction = command.substring("List ".length());
-                if(instruction.equals("All".toLowerCase())) {
+                if(instruction.toLowerCase().equals("All".toLowerCase())) {
                     bank.printAccounts();
                 } else if(bank.accounts.containsKey(instruction)) {
                     bank.showAccount(instruction);
@@ -47,16 +50,30 @@ public class Main {
 }
 
 class Bank {
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     LinkedList<Transaction> transactions = new LinkedList<Transaction>();
     HashMap<String, Integer> accounts = new HashMap<String, Integer>();
 
-    Bank(String input) throws ParseException {
-        String[] transactionStrings = input.split("\n");
-        for (int i = 1; i<transactionStrings.length; i++) {
-            Transaction trans = new Transaction(transactionStrings[i]);
+    void addTransaction(String input) {
+        try {
+            Transaction trans = new Transaction(input);
             this.transactions.add(trans);
             addToAccount(trans.to, trans.value);
             subFromAccount(trans.from, trans.value);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("could not parse transaction, invalid value, skipping");
+        } catch (DateTimeParseException e) {
+            LOGGER.warn("could not parse transaction, invalid date, skipping");
+        }
+    }
+
+    void transactionsFromFile(String path) throws IOException {
+        Path file = Paths.get(path);
+        String input = Files.readString(file);
+        String[] transactionStrings = input.split("\n");
+        for (int i = 1; i<transactionStrings.length; i++) {
+            addTransaction(transactionStrings[i]);                
         }
     }
 
@@ -102,7 +119,7 @@ class Transaction {
     String description;
     LocalDate date;
 
-    Transaction(String transString) throws ParseException{
+    Transaction(String transString) {
         String[] elements = transString.split(",");
         date = LocalDate.parse(elements[0], DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         from = elements[1];
